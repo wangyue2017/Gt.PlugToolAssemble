@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29911.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EventBus", "EventBus", "{123018D0-A872-46F5-B2BD-FD9D54DE0E58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gt.EventBus", "Gt.EventBus\Gt.EventBus.csproj", "{945EDDBA-B8D9-4863-8976-5511C1D772F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gt.EventBus.Extensions", "Gt.EventBus.Extensions\Gt.EventBus.Extensions.csproj", "{D6118B1C-A08F-45A7-A438-83697A629A67}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{945EDDBA-B8D9-4863-8976-5511C1D772F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{945EDDBA-B8D9-4863-8976-5511C1D772F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{945EDDBA-B8D9-4863-8976-5511C1D772F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{945EDDBA-B8D9-4863-8976-5511C1D772F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6118B1C-A08F-45A7-A438-83697A629A67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6118B1C-A08F-45A7-A438-83697A629A67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6118B1C-A08F-45A7-A438-83697A629A67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6118B1C-A08F-45A7-A438-83697A629A67}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{945EDDBA-B8D9-4863-8976-5511C1D772F7} = {123018D0-A872-46F5-B2BD-FD9D54DE0E58}
+		{D6118B1C-A08F-45A7-A438-83697A629A67} = {123018D0-A872-46F5-B2BD-FD9D54DE0E58}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E94A7198-6D38-4FC6-9791-010B8746F463}
+	EndGlobalSection
+EndGlobal

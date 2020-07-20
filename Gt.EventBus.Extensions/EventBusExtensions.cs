@@ -36,7 +36,8 @@ namespace Gt.EventBus.Extensions
                         var interfaces = type.GetInterfaces();
                         foreach (var face in interfaces)
                         {
-                            services.Add(new ServiceDescriptor(face, type, lifetime));
+                            //if (face is typeof(IEventHandler<,>))
+                            //    services.Add(new ServiceDescriptor(face, type, lifetime));
                         }
                     }
                 }

@@ -24,6 +24,8 @@ namespace Gt.EventBus
     public interface IINotificationHandler<TNotification>
     where TNotification : INotification
     {
+
+        public int Order { set; get; } 
         Task Handle(TNotification notification, CancellationToken cancellationToken);
     }
 

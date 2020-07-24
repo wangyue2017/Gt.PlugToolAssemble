@@ -4,7 +4,7 @@ using System.Text;
 using System.Linq;
 using System.Collections.Concurrent;
 
-namespace Gt.EventBus.Extensions
+namespace Gt.Extensions
 {
   public  class EventBusRegister
     {

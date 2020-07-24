@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Gt.EventBus.Default
+namespace Gt
 {
     public class EventBus : IEventBus
     {
@@ -16,21 +16,24 @@ namespace Gt.EventBus.Default
         public Task Publish(INotification notification, CancellationToken cancellationToken = default)
         {
             using var scope = _provider.CreateScope();
-            var eventHandler = scope.ServiceProvider.GetService<IINotificationHandler<INotification>>();
-            return eventHandler?.Handle(notification, cancellationToken);
+            var eventHandlers = scope.ServiceProvider.GetService<IEnumerable<IINotificationHandler<INotification>>>();
+            var list = new List<Task>();
+            foreach (var eventHandler in eventHandlers)
+                list.Add(eventHandler.Handle(notification, cancellationToken));
+            return Task.WhenAll(list);
         }
 
         public Task<TResponse> Send<TResponse>(IRequestResult<TResponse> request, CancellationToken cancellationToken = default)
         {
             using var scope = _provider.CreateScope();
-            var eventHandler = scope.ServiceProvider.GetService<IRequestResultHandler<IRequestResult<TResponse>,TResponse>> ();
+            var eventHandler = scope.ServiceProvider.GetService<IRequestResultHandler<IRequestResult<TResponse>, TResponse>>();
             return eventHandler?.Handle(request, cancellationToken);
         }
 
-        public Task Send(IRequest request, CancellationToken cancellationToken = default)
+        public Task Send<TRequest>(TRequest request, CancellationToken cancellationToken = default) where TRequest : IRequest
         {
             using var scope = _provider.CreateScope();
-            var eventHandler = scope.ServiceProvider.GetService<IRequestHandler<IRequest>>();
+            var eventHandler = scope.ServiceProvider.GetService<IRequestHandler<TRequest>>();
             return eventHandler?.Handle(request, cancellationToken);
         }
     }

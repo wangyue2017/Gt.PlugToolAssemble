@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-namespace Gt.EventBus.Extensions
+namespace Gt.Extensions
 {
   public  class EventBusOptions
     {
@@ -19,11 +19,6 @@ namespace Gt.EventBus.Extensions
         /// 具体类型集合
         /// </summary>
         public List<Type> Types { set; get; } = new List<Type>();
-
-        /// <summary>
-        /// 程序集名称集合
-        /// </summary>
-        public List<string> Assemblys { set; get; } = new List<string>();
 
         /// <summary>
         /// 注入的生命周期

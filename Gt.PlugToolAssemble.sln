@@ -5,9 +5,13 @@ VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EventBus", "EventBus", "{123018D0-A872-46F5-B2BD-FD9D54DE0E58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gt.EventBus", "Gt.EventBus\Gt.EventBus.csproj", "{945EDDBA-B8D9-4863-8976-5511C1D772F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gt.EventBus", "Gt.EventBus\Gt.EventBus.csproj", "{945EDDBA-B8D9-4863-8976-5511C1D772F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gt.EventBus.Extensions", "Gt.EventBus.Extensions\Gt.EventBus.Extensions.csproj", "{D6118B1C-A08F-45A7-A438-83697A629A67}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gt.EventBus.Extensions", "Gt.EventBus.Extensions\Gt.EventBus.Extensions.csproj", "{D6118B1C-A08F-45A7-A438-83697A629A67}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example", "Example", "{9642A70D-9FF8-43FA-85E6-8A48EFEB5771}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBusExample", "EventBusExample\EventBusExample.csproj", "{426A88A5-8D53-40AA-AA5C-854713F4F365}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +27,10 @@ Global
 		{D6118B1C-A08F-45A7-A438-83697A629A67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6118B1C-A08F-45A7-A438-83697A629A67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6118B1C-A08F-45A7-A438-83697A629A67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{426A88A5-8D53-40AA-AA5C-854713F4F365}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{426A88A5-8D53-40AA-AA5C-854713F4F365}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{426A88A5-8D53-40AA-AA5C-854713F4F365}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{426A88A5-8D53-40AA-AA5C-854713F4F365}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -30,6 +38,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{945EDDBA-B8D9-4863-8976-5511C1D772F7} = {123018D0-A872-46F5-B2BD-FD9D54DE0E58}
 		{D6118B1C-A08F-45A7-A438-83697A629A67} = {123018D0-A872-46F5-B2BD-FD9D54DE0E58}
+		{426A88A5-8D53-40AA-AA5C-854713F4F365} = {9642A70D-9FF8-43FA-85E6-8A48EFEB5771}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E94A7198-6D38-4FC6-9791-010B8746F463}

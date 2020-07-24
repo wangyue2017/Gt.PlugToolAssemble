@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
-namespace Gt.EventBus.Extensions
+namespace Gt.Extensions
 {
 
     public enum RegisterStyle
@@ -18,61 +19,85 @@ namespace Gt.EventBus.Extensions
     public static class EventBusExtensions
     {
 
-        public static void AddEventBus(this IServiceCollection services, Action<EventBusOptions> action)
+        public static void AddEventBus(this IServiceCollection services, Action<EventBusOptions> action = null)
         {
-            if (action == null || action == default(Action<EventBusOptions>))
-                throw new ArgumentNullException("注入的程序集加载项不能为空");
+
             var options = new EventBusOptions();
-            action.Invoke(options);
+            action?.Invoke(options);
+            services.AddRegister();
+            if (options.Types.Count < 1 && options.Assembly == null)
+            {
+                var assemblys = Directory.GetFiles(AppContext.BaseDirectory, "*.dll")
+                                                            .Where(file => !file.Contains("System.", StringComparison.OrdinalIgnoreCase) && !file.Contains("Microsoft.", StringComparison.OrdinalIgnoreCase))
+                                                            .Select(file => Assembly.LoadFile(file))
+                                                            .ToList();
 
-            if (options.Assemblys.Count < 1 && options.Types.Count < 1 && options.Assembly == null)
-                throw new ArgumentNullException("注入的程序集加载项不能为空");
+                EventBusHandleInjection(services, assemblys, options.Lifetime);
+            }
 
-            //if (options.Assemblys.Count > 0)
-            //    services.EventBusHandleInjection(options.Assemblys, options.Lifetime);
+        }
+
+
+        private static void AddRegister(this IServiceCollection services)
+        {
+            services.AddSingleton<IEventBus, EventBus>();
         }
 
 
         private static void EventBusHandleInjection(this IServiceCollection services, List<Assembly> assemblys, ServiceLifetime lifetime)
         {
-
             assemblys?.SelectMany(s => s.DefinedTypes)
                                .ToList()
                                .ForEach(s =>
                                 {
-
+                                    CanBeRegister(s);
                                 });
-
-            //foreach (var item in assemblys)
-            //{
-            //    var assembly = System.Reflection.Assembly.Load(item);
-            //    assembly?.
-
-
-            //    foreach (var type in assembly.ExportedTypes)
-            //    {
-            //        if (!type.IsAbstract && !type.IsInterface && !type.IsGenericType && type.CustomAttributes != null)
-            //        {
-            //            var interfaces = type.GetInterfaces();
-            //            foreach (var face in interfaces)
-            //            {
-            //                //if (face is typeof(IEventHandler<,>))
-            //                //    services.Add(new ServiceDescriptor(face, type, lifetime));
-            //            }
-            //        }
-            //    }
-            //}
-
+            if (EventBusRegister.Containers.Count > 0)
+            {
+                foreach (var Container in EventBusRegister.Containers)
+                {
+                    if (Container.Value.Count > 1)
+                        services.TryAddEnumerable(Container.Value.ConvertAll(s => new ServiceDescriptor(Container.Key, s, lifetime)));
+                    else
+                    {
+                        var @interface = Container.Key;
+                        var @class = Container.Value.FirstOrDefault();
+                        services.AddScoped(@interface, @class);
+                    }
+                }
+            }
         }
 
         private static void CanBeRegister(Type type)
         {
-            EventBusRegister.Interfaces.ForEach(o => 
+            EventBusRegister.Interfaces.ForEach(o =>
             {
                 ///首先过滤当前类非抽象类或接口 并且包含接口
-                if (!type.IsAbstract && !type.IsInterface&&type.GetInterfaces().Any())
-                { 
-                       
+                if (!type.IsAbstract && !type.IsInterface && type.GetInterfaces().Any())
+                {
+                    foreach (var @interface in type.GetInterfaces())
+                    {
+                        ///内置的接口符合
+                        if (@interface.Name == o.Type.Name)
+                        {
+                            if (EventBusRegister.Containers.Any(c => c.Key.Name == o.Type.Name))
+                            {
+                                if (o.Style == RegisterStyle.One)
+                                    EventBusRegister.Containers[@interface] = new List<Type>() { type };
+                                else
+                                {
+                                    var list = EventBusRegister.Containers[@interface];
+                                    if (!list.Any(o => o.Name == type.Name))
+                                    {
+                                        list.Add(type);
+                                        EventBusRegister.Containers[@interface] = list;
+                                    }
+                                }
+                            }
+                            else
+                                EventBusRegister.Containers[@interface] = new List<Type>() { type };
+                        }
+                    }
                 }
             });
         }

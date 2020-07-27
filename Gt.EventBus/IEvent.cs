@@ -14,7 +14,7 @@ namespace Gt
     /// 1对1返回值
     /// </summary>
     /// <typeparam name="ITResponse"></typeparam>
-    public interface IRequestResult<out ITResponse>
+    public interface IRequestResult<out ITResponse> 
     {
 
     }

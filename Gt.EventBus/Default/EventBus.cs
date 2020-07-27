@@ -13,20 +13,23 @@ namespace Gt
         public EventBus(IServiceProvider provider)
         => _provider = provider;
 
-        public Task Publish(INotification notification, CancellationToken cancellationToken = default)
+        public Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : INotification
         {
             using var scope = _provider.CreateScope();
-            var eventHandlers = scope.ServiceProvider.GetService<IEnumerable<IINotificationHandler<INotification>>>();
+            var eventHandlers = scope.ServiceProvider.GetService<IEnumerable<INotificationHandler<TNotification>>>();
             var list = new List<Task>();
             foreach (var eventHandler in eventHandlers)
                 list.Add(eventHandler.Handle(notification, cancellationToken));
             return Task.WhenAll(list);
         }
 
-        public Task<TResponse> Send<TResponse>(IRequestResult<TResponse> request, CancellationToken cancellationToken = default)
+        public Task<TResponse> SendToReturn<TRequestResult, TResponse>(TRequestResult request, CancellationToken cancellationToken = default) where TRequestResult : IRequestResult<TResponse>
         {
+            Console.WriteLine(request.GetType().Name);
+            Console.WriteLine(typeof(TRequestResult).Name);
+            Console.WriteLine(typeof(TResponse).Name);
             using var scope = _provider.CreateScope();
-            var eventHandler = scope.ServiceProvider.GetService<IRequestResultHandler<IRequestResult<TResponse>, TResponse>>();
+            var eventHandler = scope.ServiceProvider.GetService<IRequestResultHandler<TRequestResult, TResponse>>();
             return eventHandler?.Handle(request, cancellationToken);
         }
 
@@ -35,6 +38,12 @@ namespace Gt
             using var scope = _provider.CreateScope();
             var eventHandler = scope.ServiceProvider.GetService<IRequestHandler<TRequest>>();
             return eventHandler?.Handle(request, cancellationToken);
+        }
+
+        public Task<TResponse> Send<TResponse>(IRequestResult<TResponse> request, CancellationToken cancellationToken = default) 
+        {
+            Console.WriteLine(request.GetType().Name);
+            return SendToReturn<IRequestResult<TResponse>, TResponse>(request, cancellationToken);
         }
     }
 }

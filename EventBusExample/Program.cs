@@ -14,8 +14,12 @@ namespace EventBusExample
             services.AddEventBus();
             var provider = services.BuildServiceProvider();
             var eventBus = provider.GetService<IEventBus>();
-            await eventBus.Send(new CreateEmailRequest());
+           // var eventBus = provider.GetService<IRequestResultHandler<CreateQQRequest,Result>> ();
+            // await eventBus.Send(new ExampleRequest());
+            //await eventBus.Publish(new CreateMessageNotification());
+            var result = await eventBus.Send(new CreateQQRequest());
             Console.ReadKey();
         }
     }
 }
+                      

@@ -6,15 +6,18 @@ using System.Collections.Concurrent;
 
 namespace Gt.Extensions
 {
-  public  class EventBusRegister
+    internal class EventBusRegister
     {
-        public static readonly List<(Type Type, RegisterStyle Style)> Interfaces = new List<(Type Type, RegisterStyle Style)>()
+        /// <summary>
+        /// 注册规约
+        /// </summary>
+        internal static readonly Dictionary<Type, RegisterStyle> _specifications = new Dictionary<Type, RegisterStyle>()
         {
-            (typeof(IRequestHandler<>), RegisterStyle.One),
-            (typeof(IRequestResultHandler<,>),RegisterStyle.One),
-            (typeof(IINotificationHandler<>), RegisterStyle.Many),
+            [typeof(IRequestHandler<>)]= RegisterStyle.One,
+            [typeof(IRequestResultHandler<,>)] = RegisterStyle.One,
+            [typeof(INotificationHandler<>)] = RegisterStyle.Many,
         };
 
-        public static ConcurrentDictionary<Type, List<Type>> Containers = new ConcurrentDictionary<Type, List<Type>>();
+        internal static Dictionary<Type, List<Type>> _containers = new Dictionary<Type, List<Type>>();
     }
 }

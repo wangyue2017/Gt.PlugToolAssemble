@@ -47,15 +47,24 @@ namespace Gt.Extensions
         {
             services.AddSingleton<IEventBus, EventBus>();
             ///内存中存在需要注入的键值集合
-            foreach (var keyValuePair in EventBusRegister._containers)
+            foreach (var keyValuePair in EventBusContainer.Provides)
             {
                 if (keyValuePair.Value.Count > 1)
-                {
-                    //if (keyValuePair.Key.Name == typeof(INotificationHandler<>).Name)
-                        services.TryAddEnumerable(keyValuePair.Value.ConvertAll(s => new ServiceDescriptor(keyValuePair.Key, s, options.Lifetime)));
-                }
+                    services.TryAddEnumerable(keyValuePair.Value.ConvertAll(s => new ServiceDescriptor(keyValuePair.Key, s, options.Lifetime)));
                 else
-                    services.Add(new ServiceDescriptor(keyValuePair.Key, keyValuePair.Value.FirstOrDefault(), options.Lifetime));
+                {
+                    var ImplementationType = keyValuePair.Value.FirstOrDefault();
+                    if (keyValuePair.Key.Name == typeof(IRequestResultHandler<,>).Name)
+                    {
+                        foreach (var argument in keyValuePair.Key.GenericTypeArguments)
+                        {
+                            if (argument.GetTypeInfo().ImplementedInterfaces.Any(c => c.Name == typeof(IRequestResult<>).Name))
+                                EventBusDynamic.Proxy[argument] = keyValuePair.Key;
+                        }
+                    }
+                    services.Add(new ServiceDescriptor(keyValuePair.Key, ImplementationType, options.Lifetime));
+                }
+
             }
         }
 
@@ -67,11 +76,11 @@ namespace Gt.Extensions
                 foreach (var @interface in type.GetInterfaces())
                 {
                     ///符合规则限制的注入接口类型
-                    if (EventBusRegister._specifications.Any(o => o.Key.Name == @interface.Name))
+                    if (EventBusContainer.Specifications.Any(o => o.Key.Name == @interface.Name))
                     {
-                        var registerStyle = EventBusRegister._specifications.FirstOrDefault(o => o.Key.Name == @interface.Name).Value;
+                        var registerStyle = EventBusContainer.Specifications.FirstOrDefault(o => o.Key.Name == @interface.Name).Value;
 
-                        if (!EventBusRegister._containers.TryGetValue(@interface, out var list))
+                        if (!EventBusContainer.Provides.TryGetValue(@interface, out var list))
                             list = new List<Type>() { type };
                         else
                         {
@@ -80,7 +89,7 @@ namespace Gt.Extensions
                             else
                                 list = new List<Type>() { type };
                         }
-                        EventBusRegister._containers[@interface] = list;
+                        EventBusContainer.Provides[@interface] = list;
                     }
                 }
             }

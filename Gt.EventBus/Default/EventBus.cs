@@ -25,12 +25,15 @@ namespace Gt
 
         public Task<TResponse> SendToReturn<TRequestResult, TResponse>(TRequestResult request, CancellationToken cancellationToken = default) where TRequestResult : IRequestResult<TResponse>
         {
-            Console.WriteLine(request.GetType().Name);
-            Console.WriteLine(typeof(TRequestResult).Name);
-            Console.WriteLine(typeof(TResponse).Name);
-            using var scope = _provider.CreateScope();
-            var eventHandler = scope.ServiceProvider.GetService<IRequestResultHandler<TRequestResult, TResponse>>();
-            return eventHandler?.Handle(request, cancellationToken);
+            if (EventBusDynamic.Proxy.TryGetValue(request.GetType(), out var implementationType))
+            {
+                using var scope = _provider.CreateScope();
+                var eventHandler = scope.ServiceProvider.GetService(implementationType);
+                var cc = eventHandler as IRequestResultHandler<TRequestResult, TResponse>;
+                return Task.FromResult(default(TResponse));
+                //return eventHandler?.Handle(request, cancellationToken);
+            }
+            return Task.FromResult(default(TResponse));
         }
 
         public Task Send<TRequest>(TRequest request, CancellationToken cancellationToken = default) where TRequest : IRequest
@@ -40,7 +43,7 @@ namespace Gt
             return eventHandler?.Handle(request, cancellationToken);
         }
 
-        public Task<TResponse> Send<TResponse>(IRequestResult<TResponse> request, CancellationToken cancellationToken = default) 
+        public Task<TResponse> Send<TResponse>(IRequestResult<TResponse> request, CancellationToken cancellationToken = default)
         {
             Console.WriteLine(request.GetType().Name);
             return SendToReturn<IRequestResult<TResponse>, TResponse>(request, cancellationToken);

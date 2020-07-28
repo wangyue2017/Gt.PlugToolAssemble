@@ -71,7 +71,7 @@ namespace Gt.Extensions
 
         private static void CanBeRegister(Type type)
         {
-            if (!type.IsEnum && !type.IsAbstract && !type.IsInterface && type.GetInterfaces().Any())
+            if (type.IsPublic && !type.IsEnum && !type.IsAbstract && !type.IsInterface && type.GetInterfaces().Any())
             {
                 foreach (var @interface in type.GetInterfaces())
                 {

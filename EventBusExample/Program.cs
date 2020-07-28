@@ -14,12 +14,16 @@ namespace EventBusExample
             services.AddEventBus();
             var provider = services.BuildServiceProvider();
             var eventBus = provider.GetService<IEventBus>();
-           // var eventBus = provider.GetService<IRequestResultHandler<CreateQQRequest,Result>> ();
-            // await eventBus.Send(new ExampleRequest());
-            //await eventBus.Publish(new CreateMessageNotification());
-            var result = await eventBus.Send(new CreateQQRequest());
+
+
+            await eventBus.Send(new ExampleRequest() { Message = "事件命令发送" });///单独的命令
+
+            await eventBus.Publish(new CreateMessageNotification());/// 1对多 多播事件
+
+            var result = await eventBus.Send<CreateQQRequest, string>(new CreateQQRequest());/// 命令带返回值
+
+            Console.WriteLine(result);
             Console.ReadKey();
         }
     }
 }
-                      

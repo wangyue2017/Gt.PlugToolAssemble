@@ -12,9 +12,9 @@ namespace EventBusExample
         public string Message { set; get; }
     }
 
-    public class CreateQQRequest : IRequestResult<Result>
+    public class CreateQQRequest : IRequestResult<string>
     {
-        
+
     }
 
     public class Result

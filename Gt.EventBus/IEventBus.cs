@@ -9,7 +9,7 @@ namespace Gt
     public interface IEventBus
     {
 
-       Task<TResponse> Send<TResponse>(IRequestResult<TResponse> request, CancellationToken cancellationToken = default);
+        Task<TResponse> Send<TRequestResult, TResponse>(TRequestResult request, CancellationToken cancellationToken = default) where TRequestResult : IRequestResult<TResponse>;
 
         Task Send<TRequest>(TRequest request, CancellationToken cancellationToken = default) where TRequest : IRequest;
 

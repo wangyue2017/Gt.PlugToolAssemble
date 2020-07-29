@@ -8,7 +8,7 @@ namespace Gt
 {
 
 
-    public interface IRequestResultHandler<TRequestResult, TResponse>
+    public interface IRequestResultHandler<in TRequestResult, TResponse>
         where TRequestResult : IRequestResult<TResponse> 
     {
         Task<TResponse> Handle(TRequestResult request, CancellationToken cancellationToken);

@@ -10,12 +10,6 @@ using System.Runtime.Loader;
 namespace Gt.Extensions
 {
 
-    public enum RegisterStyle
-    {
-        One = 0,
-        Many = 1
-    }
-
 
     public static class EventBusExtensions
     {
@@ -50,7 +44,9 @@ namespace Gt.Extensions
             foreach (var keyValuePair in EventBusContainer.Provides)
             {
                 if (keyValuePair.Value.Count > 1)
-                    services.TryAddEnumerable(keyValuePair.Value.ConvertAll(s => new ServiceDescriptor(keyValuePair.Key, s, options.Lifetime)));
+                {
+                        services.TryAddEnumerable(keyValuePair.Value.OrderBy(s=>s.Order).Select(s => new ServiceDescriptor(keyValuePair.Key, s.Type, options.Lifetime)));
+                }
                 else
                 {
                     var ImplementationType = keyValuePair.Value.FirstOrDefault();
@@ -62,7 +58,7 @@ namespace Gt.Extensions
                                 EventBusDynamic.Proxy[argument] = keyValuePair.Key;
                         }
                     }
-                    services.Add(new ServiceDescriptor(keyValuePair.Key, ImplementationType, options.Lifetime));
+                    services.Add(new ServiceDescriptor(keyValuePair.Key, ImplementationType.Type, options.Lifetime));
                 }
 
             }
@@ -81,18 +77,19 @@ namespace Gt.Extensions
                         var registerStyle = EventBusContainer.Specifications.FirstOrDefault(o => o.Key.Name == @interface.Name).Value;
 
                         if (!EventBusContainer.Provides.TryGetValue(@interface, out var list))
-                            list = new List<Type>() { type };
+                            list = new List<(Type Type, int Order)>() { (type, type.GetCustomAttribute<RuleAttribute>()?.Order ?? 0) };
                         else
                         {
                             if (registerStyle == RegisterStyle.Many)
-                                list.Add(type);
+                                list.Add((type, type.GetCustomAttribute<RuleAttribute>()?.Order ?? 0));
                             else
-                                list = new List<Type>() { type };
+                                list = new List<(Type Type, int Order)>() { (type, type.GetCustomAttribute<RuleAttribute>()?.Order ?? 0) };
                         }
                         EventBusContainer.Provides[@interface] = list;
                     }
                 }
             }
         }
+
     }
 }

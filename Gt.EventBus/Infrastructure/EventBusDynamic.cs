@@ -11,5 +11,7 @@ namespace Gt
         /// 代理类IRequestResultHandler
         /// </summary>
         public static ConcurrentDictionary<Type, Type> Proxy = new ConcurrentDictionary<Type, Type>();
+
+
     }
 }

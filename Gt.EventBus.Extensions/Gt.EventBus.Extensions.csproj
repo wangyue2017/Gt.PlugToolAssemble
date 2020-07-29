@@ -4,11 +4,15 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/wangyue2017/Gt.PlugToolAssemble</PackageProjectUrl>
-    <PackageIcon>8a6f425194966d0d9b664731fe8f6e6.jpg</PackageIcon>
+    <PackageIcon>dog.png</PackageIcon>
     <RepositoryUrl>https://github.com/wangyue2017/Gt.PlugToolAssemble.git</RepositoryUrl>
     <AssemblyVersion>1.0.0.1</AssemblyVersion>
     <FileVersion>1.0.0.1</FileVersion>
     <Version>1.0.0.1</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Optimize>false</Optimize>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="C:\Users\Administrator\Desktop\8a6f425194966d0d9b664731fe8f6e6.jpg">
+    <None Include="..\Gt.EventBus\dog.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>

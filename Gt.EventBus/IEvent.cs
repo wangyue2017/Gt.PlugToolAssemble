@@ -34,4 +34,10 @@ namespace Gt
     {
 
     }
+
+
+    public interface IOrderRule
+    {
+        int Order { get; }
+    }
 }

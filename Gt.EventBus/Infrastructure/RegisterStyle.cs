@@ -4,7 +4,9 @@ using System.Text;
 
 namespace Gt
 {
-    public interface IPipeline
+    public enum RegisterStyle
     {
+        One = 0,
+        Many = 1
     }
 }

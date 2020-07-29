@@ -21,4 +21,10 @@ namespace EventBusExample
     {
         public string Message { set; get; } = "我已经收到你的QQ消息了";
     }
+
+
+    public class Shopping : IRequestResult<string>
+    {
+
+    }
 }

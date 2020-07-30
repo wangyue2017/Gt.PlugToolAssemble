@@ -25,6 +25,6 @@ namespace EventBusExample
 
     public class Shopping : IRequestResult<string>
     {
-
+        public string Message { set; get; }
     }
 }

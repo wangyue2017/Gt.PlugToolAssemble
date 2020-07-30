@@ -8,51 +8,50 @@ using System.Threading.Tasks;
 namespace EventBusExample
 {
 
-
+    public class GoShoppingEventHandler : IRequestResultHandler<Shopping, string>
+    {
+        public Task<string> Handle(Shopping request, CancellationToken cancellationToken)
+        {
+            return Task.FromResult("购物结束了额");
+        }
+    }
 
 
     [Rule(1)]
-    public class InMarketPipelineBehavior : IPipelineBehavior<Shopping, string>
+    public class DoShppingAdidasiPipelineBehavior : IPipelineBehavior<Shopping, string>
     {
-
-        public async Task<string> Handle(Shopping request, CancellationToken cancellationToken, Func<Shopping, Task<string>> next)
+        public async Task<string> Handle(Shopping request, CancellationToken cancellationToken, Func<Task<string>> next)
         {
-            Console.WriteLine("进入商场");
-            var status = await next(request);
-            Console.WriteLine("购物结束");
-            return "结束";
+            var message = "我来到了阿迪展厅";
+            var status = await next();
+            Console.WriteLine(status);
+            return message;
         }
     }
 
     [Rule(2)]
     public class DoShppingNikePipelineBehavior : IPipelineBehavior<Shopping, string>
     {
-        public async Task<string> Handle(Shopping request, CancellationToken cancellationToken, Func<Shopping, Task<string>> next)
+        public async Task<string> Handle(Shopping request, CancellationToken cancellationToken, Func<Task<string>> next)
         {
-            Console.WriteLine("边逛边买耐克");
-            var status = await next(request);
-            Console.WriteLine("购买耐克结束");
-            return "耐克";
-        }
-
-        public async Task<string> Handle(Shopping request, CancellationToken cancellationToken, RequestHandlerDelegate<Shopping, string> next)
-        {
-            Console.WriteLine("边逛边买耐克");
+            var message = "我来到了耐克展厅";
             var status = await next();
-            Console.WriteLine("购买耐克结束");
-            return "耐克";
+            Console.WriteLine(status);
+            return message;
         }
     }
 
     [Rule(3)]
-    public class DoShppingAdidasPipelineBehavior : IPipelineBehavior<Shopping, String>
+    public class DoShppingEndPipelineBehavior : IPipelineBehavior<Shopping, String>
     {
-        public async Task<string> Handle(Shopping request, CancellationToken cancellationToken, Func<Shopping, Task<string>> next)
+        public async Task<string> Handle(Shopping request, CancellationToken cancellationToken, Func<Task<string>> next)
         {
-            Console.WriteLine("边逛边买阿迪");
-            var status = await next(request);
-            Console.WriteLine("购买阿迪结束");
-            return "阿迪";
+            var message = "首次进入商场";
+            request.Message = "首次进入商场";
+            Console.WriteLine(message);
+            var status = await next();
+            Console.WriteLine(status);
+            return message;
         }
     }
 

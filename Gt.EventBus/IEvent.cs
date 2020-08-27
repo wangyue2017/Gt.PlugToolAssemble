@@ -27,6 +27,12 @@ namespace Gt
 
     }
 
+
+    public interface IRequestChannel
+    { 
+    
+    }
+
     /// <summary>
     /// 通知1对多
     /// </summary>
@@ -39,5 +45,10 @@ namespace Gt
     public interface IOrderRule
     {
         int Order { get; }
+    }
+
+    public interface IBuildRule
+    {
+
     }
 }

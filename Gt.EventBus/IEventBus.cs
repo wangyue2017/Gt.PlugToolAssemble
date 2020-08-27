@@ -15,6 +15,7 @@ namespace Gt
 
         Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : INotification;
 
+        Task Run<TRequest>(TRequest request, CancellationToken cancellationToken = default) where TRequest : IRequest;
         /// <summary>
         /// 特殊管道
         /// </summary>

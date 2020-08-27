@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Gt
 {
-    public class RuleAttribute :  Attribute, IOrderRule
+    public class OrderRuleAttribute :  Attribute, IOrderRule
     {
         public int _order = 0;
-        public RuleAttribute(int order = 0)
+        public OrderRuleAttribute(int order = 0)
         {
             _order = order;
         }

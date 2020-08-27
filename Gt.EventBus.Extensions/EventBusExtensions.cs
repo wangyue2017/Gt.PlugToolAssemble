@@ -19,19 +19,14 @@ namespace Gt.Extensions
 
             var options = new EventBusOptions();
             action?.Invoke(options);
-            if (options.Types.Count < 1 && options.Assembly == null)
+            foreach (var assembly in Directory.GetFiles(AppContext.BaseDirectory, "*.dll")
+                                                           .Where(file => !file.Contains("System.", StringComparison.OrdinalIgnoreCase) && !file.Contains("Microsoft.", StringComparison.OrdinalIgnoreCase))
+                                                           .Select(file => AssemblyLoadContext.Default.LoadFromAssemblyPath(file)))
             {
-                foreach (var assembly in Directory.GetFiles(AppContext.BaseDirectory, "*.dll")
-                                                            .Where(file => !file.Contains("System.", StringComparison.OrdinalIgnoreCase) && !file.Contains("Microsoft.", StringComparison.OrdinalIgnoreCase))
-                                                            .Select(file => AssemblyLoadContext.Default.LoadFromAssemblyPath(file))
-                                                            .ToList())
+                foreach (var type in assembly.GetTypes())
                 {
-                    foreach (var type in assembly.GetTypes())
-                    {
-                        CanBeRegister(type);
-                    }
+                    CanBeRegister(type);
                 }
-
             }
             services.AddEventBusCore(options);
         }
@@ -39,13 +34,13 @@ namespace Gt.Extensions
 
         private static void AddEventBusCore(this IServiceCollection services, EventBusOptions options)
         {
-            services.AddSingleton<IEventBus, EventBus>();
+            services.AddSingleton<IEventBus, DefaultEventBus>();
             ///内存中存在需要注入的键值集合
             foreach (var keyValuePair in EventBusContainer.Provides)
             {
                 if (keyValuePair.Value.Count > 1)
                 {
-                        services.TryAddEnumerable(keyValuePair.Value.OrderBy(s=>s.Order).Select(s => new ServiceDescriptor(keyValuePair.Key, s.Type, options.Lifetime)));
+                    services.TryAddEnumerable(keyValuePair.Value.OrderBy(s => s.Order).Select(s => new ServiceDescriptor(keyValuePair.Key, s.Type, options.Lifetime)));
                 }
                 else
                 {
@@ -67,7 +62,7 @@ namespace Gt.Extensions
 
         private static void CanBeRegister(Type type)
         {
-            if (type.IsPublic && !type.IsEnum && !type.IsAbstract && !type.IsInterface && type.GetInterfaces().Any())
+            if (!type.IsEnum && !type.IsAbstract && !type.IsInterface && type.GetInterfaces().Any())
             {
                 foreach (var @interface in type.GetInterfaces())
                 {
@@ -77,13 +72,13 @@ namespace Gt.Extensions
                         var registerStyle = EventBusContainer.Specifications.FirstOrDefault(o => o.Key.Name == @interface.Name).Value;
 
                         if (!EventBusContainer.Provides.TryGetValue(@interface, out var list))
-                            list = new List<(Type Type, int Order)>() { (type, type.GetCustomAttribute<RuleAttribute>()?.Order ?? 0) };
+                            list = new List<(Type Type, int Order)>() { (type, type.GetCustomAttribute<OrderRuleAttribute>()?.Order ?? 0) };
                         else
                         {
                             if (registerStyle == RegisterStyle.Many)
-                                list.Add((type, type.GetCustomAttribute<RuleAttribute>()?.Order ?? 0));
+                                list.Add((type, type.GetCustomAttribute<OrderRuleAttribute>()?.Order ?? 0));
                             else
-                                list = new List<(Type Type, int Order)>() { (type, type.GetCustomAttribute<RuleAttribute>()?.Order ?? 0) };
+                                list = new List<(Type Type, int Order)>() { (type, type.GetCustomAttribute<OrderRuleAttribute>()?.Order ?? 0) };
                         }
                         EventBusContainer.Provides[@interface] = list;
                     }

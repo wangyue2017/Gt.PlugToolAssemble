@@ -16,6 +16,9 @@ namespace Gt
             [typeof(IRequestResultHandler<,>)] = RegisterStyle.One,
             [typeof(INotificationHandler<>)] = RegisterStyle.Many,
             [typeof(IPipelineBehavior<,>)] = RegisterStyle.Many,
+            [typeof(IPipelineBehavior<>)] = RegisterStyle.Many,
+
+            //IChannelBehavior
         };
 
         public static Dictionary<Type, List<(Type Type, int Order)>> Provides = new Dictionary<Type, List<(Type Type, int Order)>>();

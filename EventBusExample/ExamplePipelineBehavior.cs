@@ -8,6 +8,18 @@ using System.Threading.Tasks;
 namespace EventBusExample
 {
 
+    public class ExampleRequestPipelineBehavior : IPipelineBehavior<ExampleRequest>
+    {
+        public async Task Handle(ExampleRequest request, CancellationToken cancellationToken, Func<Task> next)
+        {
+           
+            await next();
+            request.Message = "ExampleRequestPipelineBehavior";
+        }
+    }
+
+
+
     public class GoShoppingEventHandler : IRequestResultHandler<Shopping, string>
     {
         public Task<string> Handle(Shopping request, CancellationToken cancellationToken)
@@ -17,7 +29,7 @@ namespace EventBusExample
     }
 
 
-    [Rule(1)]
+    [OrderRule(1)]
     public class DoShppingAdidasiPipelineBehavior : IPipelineBehavior<Shopping, string>
     {
         public async Task<string> Handle(Shopping request, CancellationToken cancellationToken, Func<Task<string>> next)
@@ -29,7 +41,7 @@ namespace EventBusExample
         }
     }
 
-    [Rule(2)]
+    [OrderRule(2)]
     public class DoShppingNikePipelineBehavior : IPipelineBehavior<Shopping, string>
     {
         public async Task<string> Handle(Shopping request, CancellationToken cancellationToken, Func<Task<string>> next)
@@ -41,7 +53,7 @@ namespace EventBusExample
         }
     }
 
-    [Rule(3)]
+    [OrderRule(3)]
     public class DoShppingEndPipelineBehavior : IPipelineBehavior<Shopping, String>
     {
         public async Task<string> Handle(Shopping request, CancellationToken cancellationToken, Func<Task<string>> next)

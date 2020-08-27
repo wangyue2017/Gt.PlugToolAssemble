@@ -9,16 +9,16 @@ namespace Gt.Extensions
   public  class EventBusOptions
     {
 
-        /// <summary>
-        /// 固定的程序集
-        /// </summary>
-        public Assembly Assembly { set; get; }
+        ///// <summary>
+        ///// 固定的程序集
+        ///// </summary>
+        //public Assembly Assembly { set; get; }
 
 
         /// <summary>
         /// 具体类型集合
         /// </summary>
-        public List<Type> Types { set; get; } = new List<Type>();
+        //public List<Type> Types { set; get; } = new List<Type>();
 
         /// <summary>
         /// 注入的生命周期

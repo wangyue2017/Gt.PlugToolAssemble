@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Gt
 {
-    public class EventBus : IEventBus
+    public class DefaultEventBus : IEventBus
     {
         private readonly IServiceProvider _provider;
-        public EventBus(IServiceProvider provider)
+        public DefaultEventBus(IServiceProvider provider)
         => _provider = provider;
 
         public Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : INotification
@@ -31,10 +31,13 @@ namespace Gt
             var eventHandler = scope.ServiceProvider.GetService<IRequestResultHandler<TRequestResult, TResponse>>();
 
             var pipelines = scope.ServiceProvider.GetService<IEnumerable<IPipelineBehavior<TRequestResult, TResponse>>>();
+            if (pipelines != null && pipelines.Count() > 0)
+            {
+                var endRequest = new Func<Task<TResponse>>(() => eventHandler.Handle(request, cancellationToken));
 
-            var endRequest = new Func<Task<TResponse>>(() => eventHandler.Handle(request, cancellationToken));
-
-            return pipelines.Aggregate(endRequest, (next, pipeline) => () => pipeline.Handle(request, cancellationToken, next))();
+                return pipelines.Aggregate(endRequest, (next, pipeline) => () => pipeline.Handle(request, cancellationToken, next))();
+            }
+            return eventHandler.Handle(request, cancellationToken);
         }
 
         public Task Send<TRequest>(TRequest request, CancellationToken cancellationToken = default) where TRequest : IRequest
@@ -43,6 +46,22 @@ namespace Gt
             var eventHandler = scope.ServiceProvider.GetService<IRequestHandler<TRequest>>();
             return eventHandler?.Handle(request, cancellationToken);
         }
+
+
+
+        public Task Run<TRequest>(TRequest request, CancellationToken cancellationToken = default) where TRequest : IRequest
+        {
+            using var scope = _provider.CreateScope();
+            var eventHandler = scope.ServiceProvider.GetService<IRequestHandler<TRequest>>();
+            var pipelines = scope.ServiceProvider.GetService<IEnumerable<IPipelineBehavior<TRequest>>>();
+            if (pipelines != null && pipelines.Count() > 0)
+            {
+                var endRequest = new Func<Task>(() => eventHandler.Handle(request, cancellationToken));
+                return pipelines.Aggregate(endRequest, (next, pipeline) => () => pipeline.Handle(request, cancellationToken, next))();
+            }
+            return eventHandler?.Handle(request, cancellationToken);
+        }
+
 
         public Task<TResponse> Send<TRequestResult, TResponse>(TRequestResult request, CancellationToken cancellationToken = default) where TRequestResult : IRequestResult<TResponse>
         {

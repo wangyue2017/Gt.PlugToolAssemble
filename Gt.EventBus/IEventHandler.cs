@@ -21,6 +21,7 @@ namespace Gt
         Task Handle(TRequest request, CancellationToken cancellationToken);
     }
 
+
     public interface INotificationHandler<TNotification>
     where TNotification : INotification
     {

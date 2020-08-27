@@ -12,4 +12,10 @@ namespace Gt
 
         Task<TResponse> Handle(TRequestResult request, CancellationToken cancellationToken, Func<Task<TResponse>> next);
     }
+
+
+    public interface IPipelineBehavior<TRequest> where TRequest : IRequest
+    {
+        Task Handle(TRequest request, CancellationToken cancellationToken, Func<Task> next);
+    }
 }

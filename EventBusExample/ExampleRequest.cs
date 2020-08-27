@@ -2,7 +2,18 @@
 
 namespace EventBusExample
 {
-    public class ExampleRequest : IRequest
+
+    public class None
+    { 
+    
+    }
+
+    public interface INone
+    { 
+    
+    }
+
+    public class ExampleRequest : None,IRequest, INone
     {
         public string Message { set; get; } = "发送个邮件试试";
     }
@@ -27,4 +38,12 @@ namespace EventBusExample
     {
         public string Message { set; get; }
     }
+
+
+    public class TT : IRequestChannel
+    { 
+     
+    }
+
+
 }

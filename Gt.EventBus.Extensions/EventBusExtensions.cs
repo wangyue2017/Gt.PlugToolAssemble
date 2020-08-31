@@ -38,23 +38,33 @@ namespace Gt.Extensions
             ///内存中存在需要注入的键值集合
             foreach (var keyValuePair in EventBusContainer.Provides)
             {
-                if (keyValuePair.Value.Count > 1)
+
+                if (keyValuePair.Key.Name == typeof(IRequestResultHandler<,>).Name || (keyValuePair.Key.Name == typeof(IPipelineBehavior<>).Name) || (keyValuePair.Key.Name == typeof(IPipelineBehavior<,>).Name))
                 {
                     services.TryAddEnumerable(keyValuePair.Value.OrderBy(s => s.Order).Select(s => new ServiceDescriptor(keyValuePair.Key, s.Type, options.Lifetime)));
                 }
                 else
                 {
                     var ImplementationType = keyValuePair.Value.FirstOrDefault();
-                    if (keyValuePair.Key.Name == typeof(IRequestResultHandler<,>).Name)
-                    {
-                        foreach (var argument in keyValuePair.Key.GenericTypeArguments)
-                        {
-                            if (argument.GetTypeInfo().ImplementedInterfaces.Any(c => c.Name == typeof(IRequestResult<>).Name))
-                                EventBusDynamic.Proxy[argument] = keyValuePair.Key;
-                        }
-                    }
                     services.Add(new ServiceDescriptor(keyValuePair.Key, ImplementationType.Type, options.Lifetime));
                 }
+                //if (keyValuePair.Value.Count > 1)
+                //{
+                //    services.TryAddEnumerable(keyValuePair.Value.OrderBy(s => s.Order).Select(s => new ServiceDescriptor(keyValuePair.Key, s.Type, options.Lifetime)));
+                //}
+                //else
+                //{
+                //    var ImplementationType = keyValuePair.Value.FirstOrDefault();
+                //    if (keyValuePair.Key.Name == typeof(IRequestResultHandler<,>).Name)
+                //    {
+                //        foreach (var argument in keyValuePair.Key.GenericTypeArguments)
+                //        {
+                //            if (argument.GetTypeInfo().ImplementedInterfaces.Any(c => c.Name == typeof(IRequestResult<>).Name))
+                //                EventBusDynamic.Proxy[argument] = keyValuePair.Key;
+                //        }
+                //    }
+                //    services.Add(new ServiceDescriptor(keyValuePair.Key, ImplementationType.Type, options.Lifetime));
+                //}
 
             }
         }

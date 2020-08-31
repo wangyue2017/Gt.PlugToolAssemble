@@ -14,17 +14,17 @@ namespace Gt
         public DefaultEventBus(IServiceProvider provider)
         => _provider = provider;
 
-        public Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : INotification
+        public async Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : INotification
         {
             using var scope = _provider.CreateScope();
             var eventHandlers = scope.ServiceProvider.GetService<IEnumerable<INotificationHandler<TNotification>>>();
             var list = new List<Task>();
             foreach (var eventHandler in eventHandlers)
                 list.Add(eventHandler.Handle(notification, cancellationToken));
-            return Task.WhenAll(list);
+            await Task.WhenAll(list);
         }
 
-        public Task<TResponse> Run<TRequestResult, TResponse>(TRequestResult request, CancellationToken cancellationToken = default) where TRequestResult : IRequestResult<TResponse>
+        public async Task<TResponse> Run<TRequestResult, TResponse>(TRequestResult request, CancellationToken cancellationToken = default) where TRequestResult : IRequestResult<TResponse>
         {
             using var scope = _provider.CreateScope();
 
@@ -35,21 +35,21 @@ namespace Gt
             {
                 var endRequest = new Func<Task<TResponse>>(() => eventHandler.Handle(request, cancellationToken));
 
-                return pipelines.Aggregate(endRequest, (next, pipeline) => () => pipeline.Handle(request, cancellationToken, next))();
+                return await pipelines.Aggregate(endRequest, (next, pipeline) => () => pipeline.Handle(request, cancellationToken, next))();
             }
-            return eventHandler.Handle(request, cancellationToken);
+            else return await eventHandler.Handle(request, cancellationToken);
         }
 
-        public Task Send<TRequest>(TRequest request, CancellationToken cancellationToken = default) where TRequest : IRequest
+        public async Task Send<TRequest>(TRequest request, CancellationToken cancellationToken = default) where TRequest : IRequest
         {
             using var scope = _provider.CreateScope();
             var eventHandler = scope.ServiceProvider.GetService<IRequestHandler<TRequest>>();
-            return eventHandler?.Handle(request, cancellationToken);
+            await eventHandler?.Handle(request, cancellationToken);
         }
 
 
 
-        public Task Run<TRequest>(TRequest request, CancellationToken cancellationToken = default) where TRequest : IRequest
+        public async Task Run<TRequest>(TRequest request, CancellationToken cancellationToken = default) where TRequest : IRequest
         {
             using var scope = _provider.CreateScope();
             var eventHandler = scope.ServiceProvider.GetService<IRequestHandler<TRequest>>();
@@ -57,17 +57,18 @@ namespace Gt
             if (pipelines != null && pipelines.Count() > 0)
             {
                 var endRequest = new Func<Task>(() => eventHandler.Handle(request, cancellationToken));
-                return pipelines.Aggregate(endRequest, (next, pipeline) => () => pipeline.Handle(request, cancellationToken, next))();
+                await pipelines.Aggregate(endRequest, (next, pipeline) => async () => await pipeline.Handle(request, cancellationToken, next))();
             }
-            return eventHandler?.Handle(request, cancellationToken);
+            else
+                await eventHandler?.Handle(request, cancellationToken);
         }
 
 
-        public Task<TResponse> Send<TRequestResult, TResponse>(TRequestResult request, CancellationToken cancellationToken = default) where TRequestResult : IRequestResult<TResponse>
+        public async Task<TResponse> Send<TRequestResult, TResponse>(TRequestResult request, CancellationToken cancellationToken = default) where TRequestResult : IRequestResult<TResponse>
         {
             using var scope = _provider.CreateScope();
             var eventHandler = scope.ServiceProvider.GetService<IRequestResultHandler<TRequestResult, TResponse>>();
-            return eventHandler?.Handle(request, cancellationToken);
+            return await eventHandler?.Handle(request, cancellationToken);
         }
 
         private Task<TResponse> SendToReturn<TRequestResult, TResponse>(TRequestResult request, CancellationToken cancellationToken = default) where TRequestResult : IRequestResult<TResponse>

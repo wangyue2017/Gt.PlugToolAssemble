@@ -6,9 +6,9 @@
     <PackageProjectUrl>https://github.com/wangyue2017/Gt.PlugToolAssemble</PackageProjectUrl>
     <PackageIcon>dog.png</PackageIcon>
     <RepositoryUrl>https://github.com/wangyue2017/Gt.PlugToolAssemble.git</RepositoryUrl>
-    <AssemblyVersion>1.0.0.4</AssemblyVersion>
-    <FileVersion>1.0.0.4</FileVersion>
-    <Version>1.0.0.4</Version>
+    <AssemblyVersion>1.0.0.5</AssemblyVersion>
+    <FileVersion>1.0.0.5</FileVersion>
+    <Version>1.0.0.5</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

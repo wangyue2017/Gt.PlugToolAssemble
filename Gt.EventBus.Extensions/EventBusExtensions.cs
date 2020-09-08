@@ -33,8 +33,7 @@ namespace Gt.Extensions
                 {
 
                    
-                }
-                
+                } 
             }
             services.AddEventBusCore(options);
         }

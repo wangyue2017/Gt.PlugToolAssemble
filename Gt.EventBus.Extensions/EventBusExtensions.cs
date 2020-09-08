@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
-
 namespace Gt.Extensions
 {
 
@@ -23,10 +22,19 @@ namespace Gt.Extensions
                                                            .Where(file => !file.Contains("System.", StringComparison.OrdinalIgnoreCase) && !file.Contains("Microsoft.", StringComparison.OrdinalIgnoreCase))
                                                            .Select(file => AssemblyLoadContext.Default.LoadFromAssemblyPath(file)))
             {
-                foreach (var type in assembly.GetTypes())
+                try
                 {
-                    CanBeRegister(type);
+                    foreach (var type in assembly.GetTypes())
+                    {
+                        CanBeRegister(type);
+                    }
                 }
+                catch (Exception ex)
+                {
+
+                   
+                }
+                
             }
             services.AddEventBusCore(options);
         }

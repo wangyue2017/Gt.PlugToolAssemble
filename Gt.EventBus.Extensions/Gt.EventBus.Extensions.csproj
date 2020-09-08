@@ -20,14 +20,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Gt.EventBus\Gt.EventBus.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\Gt.EventBus\dog.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Gt.EventBus\Gt.EventBus.csproj" />
   </ItemGroup>
 
 </Project>

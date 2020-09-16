@@ -48,7 +48,7 @@ namespace Gt.Extensions
 
                 if (keyValuePair.Key.Name == typeof(IRequestResultHandler<,>).Name || (keyValuePair.Key.Name == typeof(IPipelineBehavior<>).Name) || (keyValuePair.Key.Name == typeof(IPipelineBehavior<,>).Name))
                 {
-                    services.TryAddEnumerable(keyValuePair.Value.OrderBy(s => s.Order).Select(s => new ServiceDescriptor(keyValuePair.Key, s.Type, options.Lifetime)));
+                    services.TryAddEnumerable(keyValuePair.Value.OrderByDescending(s => s.Order).Select(s => new ServiceDescriptor(keyValuePair.Key, s.Type, options.Lifetime)));
                 }
                 else
                 {

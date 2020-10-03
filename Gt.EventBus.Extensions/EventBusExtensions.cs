@@ -32,8 +32,8 @@ namespace Gt.Extensions
                 catch (Exception ex)
                 {
 
-                   
-                } 
+
+                }
             }
             services.AddEventBusCore(options);
         }
@@ -46,7 +46,7 @@ namespace Gt.Extensions
             foreach (var keyValuePair in EventBusContainer.Provides)
             {
 
-                if (keyValuePair.Key.Name == typeof(IRequestResultHandler<,>).Name || (keyValuePair.Key.Name == typeof(IPipelineBehavior<>).Name) || (keyValuePair.Key.Name == typeof(IPipelineBehavior<,>).Name))
+                if (keyValuePair.Key.Name == typeof(INotificationHandler<>).Name || keyValuePair.Key.Name == typeof(IRequestResultHandler<,>).Name || (keyValuePair.Key.Name == typeof(IPipelineBehavior<>).Name) || (keyValuePair.Key.Name == typeof(IPipelineBehavior<,>).Name))
                 {
                     services.TryAddEnumerable(keyValuePair.Value.OrderByDescending(s => s.Order).Select(s => new ServiceDescriptor(keyValuePair.Key, s.Type, options.Lifetime)));
                 }
